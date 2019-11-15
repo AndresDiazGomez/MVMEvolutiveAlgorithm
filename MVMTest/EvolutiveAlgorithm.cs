@@ -47,6 +47,8 @@
         /// </summary>
         public string TargetText { get; }
 
+        public event Action<int, Mutation> OnNewGenerationCreated = delegate { };
+
         /// <summary>
         /// Retrieve all the generations the algorithm needed to solve the problem.
         /// </summary>
@@ -59,12 +61,15 @@
             List<Generation> generations = new List<Generation>();
             var reference = GetRandomText(MaxScore);
             var score = 0;
+            var iteration = 0;
             while (score < MaxScore)
             {
+                iteration++;
                 var generation = GetNewGeneration(generationSize, reference);
                 var bestMutation = generation.GetBestMatch();
                 score = bestMutation.CurrentScore;
                 reference = bestMutation.Current;
+                OnNewGenerationCreated.Invoke(iteration, bestMutation);
                 generations.Add(generation);
             }
             return generations;

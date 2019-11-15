@@ -6,14 +6,10 @@ namespace MVMTest
     {
         private static void Main(string[] args)
         {
-            var algorithm = new EvolutiveAlgorithm("MVM INGENIERIA DE SOFTWARE");
-            var result = algorithm.Resolve(50);
-
-            for (int i = 0; i < result.Count; i++)
-            {
-                var bestMatch = result[i].GetBestMatch();
-                Console.WriteLine($"Generation: {i + 1} - Mutation: {bestMatch.Current} - Score: {bestMatch.CurrentScore} - Rate: {bestMatch.SucessRate * 100}%");
-            }
+            var algorithm = new EvolutiveAlgorithm("MVM INGENIERIA DE SOFTWARE VS INGENEO DESARROLLO Y COMPANIA");
+            algorithm.OnNewGenerationCreated += (i, generation) =>
+                Console.WriteLine($"Generation: {i} - Mutation: {generation.Current} - Score: {generation.CurrentScore} - Rate: {generation.SucessRate * 100}%");
+            var result = algorithm.Resolve(25);
         }
     }
 }
