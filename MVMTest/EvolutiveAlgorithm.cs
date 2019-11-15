@@ -4,27 +4,54 @@
     using System.Collections.Generic;
     using System.Text;
 
+    /// <summary>
+    /// Responsible for resolving a text by using evolutive algorithm.
+    /// </summary>
     public class EvolutiveAlgorithm
     {
         private const string _validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
         private Random random = new Random();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EvolutiveAlgorithm"/> class.
+        /// </summary>
+        /// <param name="targetText">Target text the evolutive algortihm is trying to solve.</param>
         public EvolutiveAlgorithm(string targetText)
             : this(targetText, 0.03m)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EvolutiveAlgorithm"/> class.
+        /// </summary>
+        /// <param name="targetText">Target text the evolutive algortihm is trying to solve.</param>
+        /// <param name="changeRate">Indicate the rate chance of each character of each mutation.</param>
         public EvolutiveAlgorithm(string targetText, decimal changeRate)
         {
             TargetText = targetText ?? throw new ArgumentNullException(nameof(targetText));
+            //TODO Check that each char of the target text can be found on the valid chars string.
             MaxScore = TargetText.Length;
             ChangeRate = changeRate;
         }
 
+        /// <summary>
+        /// Indicate the rate chance of each character of each mutation.
+        /// </summary>
         public decimal ChangeRate { get; } = 0.03m;
+        /// <summary>
+        /// Describe the maximum score the the evolutive algorithm is able to achive.
+        /// </summary>
         public int MaxScore { get; }
+        /// <summary>
+        /// Target text the evolutive algortihm is trying to solve.
+        /// </summary>
         public string TargetText { get; }
 
+        /// <summary>
+        /// Retrieve all the generations the algorithm needed to solve the problem.
+        /// </summary>
+        /// <param name="generationSize">Define the number of mutations each generation can have.</param>
+        /// <returns>Returns a collection of generations</returns>
         public List<Generation> Resolve(short generationSize)
         {
             if (generationSize <= 0) 
@@ -36,7 +63,7 @@
             {
                 var generation = GetNewGeneration(generationSize, reference);
                 var bestMutation = generation.GetBestMatch();
-                score = bestMutation.Score;
+                score = bestMutation.CurrentScore;
                 reference = bestMutation.Current;
                 generations.Add(generation);
             }
