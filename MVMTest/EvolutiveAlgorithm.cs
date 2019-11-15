@@ -47,7 +47,10 @@
         /// </summary>
         public string TargetText { get; }
 
-        public event Action<int, Mutation> OnNewGenerationCreated = delegate { };
+        /// <summary>
+        /// Event handler that is fired each time a generation is created.
+        /// </summary>
+        public event EventHandler<OnGenerationCreatedArgs> OnNewGenerationCreated = delegate { };
 
         /// <summary>
         /// Retrieve all the generations the algorithm needed to solve the problem.
@@ -69,8 +72,8 @@
                 var bestMutation = generation.GetBestMatch();
                 score = bestMutation.CurrentScore;
                 reference = bestMutation.Current;
-                OnNewGenerationCreated.Invoke(iteration, bestMutation);
                 generations.Add(generation);
+                OnNewGenerationCreated(this, new OnGenerationCreatedArgs(iteration, bestMutation));
             }
             return generations;
         }
