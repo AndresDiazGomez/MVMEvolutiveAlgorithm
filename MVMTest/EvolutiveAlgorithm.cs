@@ -35,22 +35,42 @@
         }
 
         /// <summary>
+        /// Event handler that is fired each time a generation is created.
+        /// </summary>
+        public event EventHandler<OnGenerationCreatedArgs> OnNewGenerationCreated
+        {
+            add
+            {
+                lock (_onNewGenerationCreated)
+                {
+                    _onNewGenerationCreated += value;
+                }
+            }
+            remove
+            {
+                lock (_onNewGenerationCreated)
+                {
+                    _onNewGenerationCreated -= value;
+                }
+            }
+        }
+
+        private event EventHandler<OnGenerationCreatedArgs> _onNewGenerationCreated = delegate { };
+
+        /// <summary>
         /// Indicate the rate chance of each character of each mutation.
         /// </summary>
         public decimal ChangeRate { get; } = 0.03m;
+
         /// <summary>
         /// Describe the maximum score the the evolutive algorithm is able to achive.
         /// </summary>
         public int MaxScore { get; }
+
         /// <summary>
         /// Target text the evolutive algortihm is trying to solve.
         /// </summary>
         public string TargetText { get; }
-
-        /// <summary>
-        /// Event handler that is fired each time a generation is created.
-        /// </summary>
-        public event EventHandler<OnGenerationCreatedArgs> OnNewGenerationCreated = delegate { };
 
         /// <summary>
         /// Retrieve all the generations the algorithm needed to solve the problem.
@@ -59,7 +79,7 @@
         /// <returns>Returns a collection of generations</returns>
         public List<Generation> Resolve(short generationSize)
         {
-            if (generationSize <= 0) 
+            if (generationSize <= 0)
                 throw new ArgumentException("The generation size cannot be zero or negative.", nameof(generationSize));
             List<Generation> generations = new List<Generation>();
             var reference = GetRandomText(MaxScore);
@@ -73,7 +93,7 @@
                 score = bestMutation.CurrentScore;
                 reference = bestMutation.Current;
                 generations.Add(generation);
-                OnNewGenerationCreated(this, new OnGenerationCreatedArgs(iteration, bestMutation));
+                _onNewGenerationCreated(this, new OnGenerationCreatedArgs(iteration, bestMutation));
             }
             return generations;
         }
